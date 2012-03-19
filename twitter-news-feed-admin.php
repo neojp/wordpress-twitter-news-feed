@@ -30,6 +30,7 @@
 		$usernames  = create_clean_string($_POST["tnf_usernames"]);
 		$category   = $_POST["tnf_category"];
 		$user       = $_POST["tnf_user"];
+		$post_type  = $_POST["tnf_post_type"];
     	
     	if($_POST["tnf_add_news_as_post"] == "Y") {
     	    $add_news_to_db = "checked";
@@ -39,13 +40,14 @@
             $add_news_to_db_boolean = FALSE;
     	};
 
-    	if($hashtags !="" && $usernames !="") {
+    	if($hashtags !="" || $usernames !="") {
     	
         	update_option("tnf_hashtags", $hashtags);
         	update_option("tnf_usernames", $usernames);
         	update_option("tnf_category", $category);
         	update_option("tnf_user", $user);
         	update_option("tnf_add_news_to_db", $add_news_to_db_boolean);
+        	update_option("tnf_post_type", $post_type);
         	
             $flash_success = "Twitter News Feed Options Updated";
         } else {
@@ -60,6 +62,7 @@
 		$exceptions = get_option("tnf_exceptions");
 		$category = get_option("tnf_category");
 		$user = get_option("tnf_user");
+		$post_type = get_option("tnf_post_type");
 	    
 	    // Add news as post?
 	    if(get_option("tnf_add_news_to_db")) {
@@ -111,18 +114,22 @@
 	        <td><input type="text" name="tnf_usernames" id="tnf_usernames" value="<?php echo $usernames; ?>" size="40">&nbsp;<em>ex: keirwhitaker, mikekus, gelimehouse</em></td>
 	    </tr>
 	    <tr>
-	        <th><label for="name="tnf_add_news_as_post">Add Tweets as Posts:</label></th>
+	        <th><label for="tnf_add_news_as_post" name="tnf_add_news_as_post">Add Tweets as Posts:</label></th>
 	        <td><input type="checkbox" name="tnf_add_news_as_post" id="tnf_add_news_as_post" value="Y" id="tnf_add_news_as_post" <?php echo $add_news_to_db ?>></input>
 	    </tr>
 	    <tr>
-	        <th><label for="name="tnf_category">Post Category:</label></td>
+	        <th><label for="tnf_post_type">Post type:</label></th>
+	        <td><input type="text" name="tnf_post_type" id="tnf_post_type" value="<?php echo $post_type; ?>" size="40">&nbsp;<em>ex: post, page</em></td>
+	    </tr>
+	    <tr>
+	        <th><label for="tnf_category" name="tnf_category">Post Category:</label></td>
 	        <td><?php
                     $dropdown_options = array("show_option_all" => __("View all categories"), "hide_empty" => 0, "hierarchical" => 1, "show_count" => 1, "orderby" => "name", "name" => "tnf_category", "selected" => $category);
                     wp_dropdown_categories($dropdown_options);
                 ?>
             </td>
             <tr>
-                <th><label for="name="tnf_user">Default User:</label></td>
+                <th><label for="tnf_user" name="tnf_user">Default User:</label></td>
                 <td><?php 
                         $dropdown_options = array("name" => "tnf_user", "selected" => $user);
                         wp_dropdown_users($dropdown_options); 
@@ -140,7 +147,7 @@
     <h3>Update History</h3>
     <ul>
     <?php foreach ($data as $item) : ?>
-        <li><? echo $item->comment; ?></li>
+        <li><?php echo $item->comment; ?></li>
     <?php endforeach; ?>
     </ul>
     <p><em>...The next update is scheduled for <?php echo date("l jS \of F Y - H:i:s", wp_next_scheduled("tnf_hourly_update")); ?></em></p>

@@ -100,6 +100,7 @@
                 $post["description_filtered"]   = $this->strip_hashes($item->get_description(), $hashes);
                 $post["twitter_username"]       = $twitter_status_id[3];
                 $post["twitter_username_link"]  = $this->create_twitter_link($twitter_status_id[3]);
+                $post["post_type"]              = "twitter";
             
                 // Add the new post to the db?
                 if($add_news_to_db) {
@@ -169,6 +170,7 @@
                 $new_post["post_status"]     = "publish";
                 $new_post["post_author"]     = (int)($item["user_id"]);
                 $new_post["post_category"]   = array($this->options["category"]);
+                $new_post["post_type"]       = $this->options["post_type"];
 
                 // Insert the post into the database and store the id
                 $post_id = wp_insert_post($new_post);
@@ -215,7 +217,10 @@
            	$options["exceptions"]      = get_option("tnf_exceptions");
            	$options["category"]        = get_option("tnf_category");
            	$options["user"]            = get_option("tnf_user");
-           	$options["add_news_to_db"]  = get_option("tnf_add_news_to_db");
+            $options["add_news_to_db"]  = get_option("tnf_add_news_to_db");
+           	
+            $post_type = get_option("tnf_post_type");
+            $options["post_type"] = !empty($post_type) ? $post_type : 'post';
 		
     		$this->options = $options;
         }
